@@ -19,9 +19,6 @@ public:
 	
 	ASpiralStairs();
 
-	UPROPERTY(EditAnywhere, Category = "Stair Settings")
-	UStaticMesh* StepMesh = nullptr;
-
 	UPROPERTY(EditAnywhere, Category = "Stair Settings", meta = (ClampMin = "1"))
 	int32 StepsHeight = 20;
 
@@ -44,16 +41,16 @@ public:
 	bool bAutoInnerColumnRadius = true;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inner Column Settings", meta = (ClampMin = "0.0"))
-	float AutoInnerColumnMargin = 40.0f;
+	float AutoInnerColumnMargin = 0.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inner Column Settings", meta = (ClampMin = "0.0", ClampMax = "2000.0"))
 	float InnerColumnRadius = 60.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inner Column Settings", meta = (ClampMin = "0.0"))
-	float InnerColumnClearance = 5.0f;
+	float InnerColumnClearance = 0.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inner Column Settings")
-	float InnerColumnHeightPadding = 0.0f;
+	float InnerColumnHeightPadding = 20.0f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<USceneComponent> Root = nullptr;

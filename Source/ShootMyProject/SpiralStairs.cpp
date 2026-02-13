@@ -12,10 +12,14 @@ static float GetStepHalfRadialSize(const UStaticMesh* Mesh, const FVector& StepS
 	const FBoxSphereBounds B = Mesh->GetBounds();
 	const FVector Ext = B.BoxExtent;
 
-	const float RawHalf = FMath::Max(Ext.X, Ext.Y);
-	const float ScaleXY = FMath::Max(StepScale.X, StepScale.Y);
-
-	return RawHalf * ScaleXY;
+	if (Ext.X <= Ext.Y)
+	{
+		return Ext.X * StepScale.X;
+	}
+	else
+	{
+		return Ext.Y * StepScale.Y;
+	}
 }
 
 ASpiralStairs::ASpiralStairs()
@@ -52,37 +56,37 @@ void ASpiralStairs::PostEditChangeProperty(FPropertyChangedEvent& PropertyChange
 
 void ASpiralStairs::Rebuild()
 {
+	if (!StepsISM) return;
+
 	StepsISM->ClearInstances();
 
-	if (StepMesh && StepsPerTurn > 0 && NumberOfTurns > 0 && StepsHeight > 0.f)
+	UStaticMesh* UsedStepMesh = StepsISM->GetStaticMesh();
+	if (!UsedStepMesh)
 	{
-		const int32 lTotalSteps = NumberOfTurns * StepsPerTurn; // 36
-		const float lAngleStep = 360.0f / StepsPerTurn; //deg
-
-		const float StepHalfWidth = GetStepHalfRadialSize(StepMesh, StepScale);
-		const float PlacementRadius = FMath::Max(0.f, Radius - StepHalfWidth);
-
-		StepsISM->PreAllocateInstancesMemory(lTotalSteps);
-
-		for (int32 i = 0; i < lTotalSteps; i++)
-		{
-			const float lAngleDeg = i * lAngleStep; //deg
-			const float lAngleRad = FMath::DegreesToRadians(lAngleDeg); //rad
-
-			const float lX = FMath::Cos(lAngleRad) * Radius;
-			const float lY = FMath::Sin(lAngleRad) * Radius;
-			const float lZ = i * StepsHeight;
-
-			const FRotator lStepRot = FRotator(0.f, lAngleDeg, 0.f) + StepRotationOffset;
-			const FTransform lStepITM(lStepRot, FVector(lX, lY, lZ), StepScale);
-
-			StepsISM->AddInstance(lStepITM, false);
-		}
+		return;
 	}
 
-	else
+	const float StepHalfWidth = GetStepHalfRadialSize(UsedStepMesh, StepScale);
+
+	const int32 lTotalSteps = NumberOfTurns * StepsPerTurn;
+	const float lAngleStep = 360.0f / StepsPerTurn; // deg
+	const float PlacementRadius = FMath::Max(0.f, Radius - StepHalfWidth); //rad
+
+	StepsISM->PreAllocateInstancesMemory(lTotalSteps);
+
+	for (int32 i = 0; i < lTotalSteps; i++)
 	{
-		StepsISM->SetStaticMesh(nullptr);
+		const float lAngleDeg = i * lAngleStep;
+		const float lAngleRad = FMath::DegreesToRadians(lAngleDeg);
+
+		const float lX = FMath::Cos(lAngleRad) * PlacementRadius;
+		const float lY = FMath::Sin(lAngleRad) * PlacementRadius;
+		const float lZ = i * StepsHeight;
+
+		const FRotator lStepRot = FRotator(0.f, lAngleDeg, 0.f) + StepRotationOffset;
+		const FTransform lStepITM(lStepRot, FVector(lX, lY, lZ), StepScale);
+
+		StepsISM->AddInstance(lStepITM, false);	
 	}
 
 	const int32 TotalSteps = FMath::Max(1, NumberOfTurns * StepsPerTurn);
@@ -95,16 +99,17 @@ void ASpiralStairs::Rebuild()
 
 		float TargetRadius = 0.f;
 
-		if (bAutoInnerColumnRadius && StepMesh)
+		if (bAutoInnerColumnRadius && UsedStepMesh)
 		{
-			const float StepHalfWidth = GetStepHalfRadialSize(StepMesh, StepScale);
 			const float InnerEdgeRadius = FMath::Max(0.f, Radius - 2.f * StepHalfWidth);
-
-			TargetRadius = FMath::Max(0.f, InnerEdgeRadius - InnerColumnClearance);
+			TargetRadius = FMath::Max(0.f, InnerEdgeRadius - AutoInnerColumnMargin - InnerColumnClearance);
+		}
+		else
+		{
+			TargetRadius = FMath::Max(0.f, InnerColumnRadius - InnerColumnClearance);
 		}
 
 		FitMeshToRadiusAndHeight(InnerColumn, TargetRadius, TargetHeight);
-
 	}
 }
 
