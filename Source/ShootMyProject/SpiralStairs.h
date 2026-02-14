@@ -56,7 +56,7 @@ public:
 	TObjectPtr<USceneComponent> Root = nullptr;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	TObjectPtr<UInstancedStaticMeshComponent> StepsISM = nullptr;
+	TObjectPtr<UInstancedStaticMeshComponent> StepsISM = nullptr; //instansed static mesh
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<class UStaticMeshComponent> InnerColumn = nullptr;
@@ -64,11 +64,6 @@ public:
 protected:
 	
 	virtual void OnConstruction(const FTransform& Transform) override;
-
-#if WITH_EDITOR
-	
-	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
-#endif
 
 private:
 
