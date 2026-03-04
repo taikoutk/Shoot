@@ -11,6 +11,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "ShootMyProject.h"
+#include "Weapon.h"
 
 AShootMyProjectCharacter::AShootMyProjectCharacter()
 {
@@ -48,6 +49,30 @@ AShootMyProjectCharacter::AShootMyProjectCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+}
+
+void AShootMyProjectCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (WeaponClass)
+	{
+		CurrentWeapon = GetWorld()->SpawnActor<AWeapon>(WeaponClass);
+
+		CurrentWeapon->AttachToComponent(
+			GetMesh(),
+			FAttachmentTransformRules::SnapToTargetIncludingScale,
+			"HandGrip_R"
+		);
+	}
+}
+
+void AShootMyProjectCharacter::Shoot()
+{
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->Fire();
+	}
 }
 
 void AShootMyProjectCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

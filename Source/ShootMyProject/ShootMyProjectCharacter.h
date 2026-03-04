@@ -11,6 +11,7 @@ class USpringArmComponent;
 class UCameraComponent;
 class UInputAction;
 struct FInputActionValue;
+class AWeapon;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
@@ -30,6 +31,13 @@ class AShootMyProjectCharacter : public ACharacter
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FollowCamera;
+
+	/** Weapon */
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AWeapon> WeaponClass;
+
+	UPROPERTY()
+	AWeapon* CurrentWeapon;
 	
 protected:
 
@@ -59,6 +67,8 @@ protected:
 	/** Initialize input action bindings */
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	virtual void BeginPlay() override;
+
 protected:
 
 	/** Called for movement input */
@@ -84,6 +94,8 @@ public:
 	/** Handles jump pressed inputs from either controls or UI interfaces */
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoJumpEnd();
+
+	void Shoot();
 
 public:
 
