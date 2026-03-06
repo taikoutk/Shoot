@@ -90,6 +90,9 @@ void AShootMyProjectCharacter::SetupPlayerInputComponent(UInputComponent* Player
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AShootMyProjectCharacter::Look);
+		
+		// Shoot
+		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, this, &AShootMyProjectCharacter::Shoot);
 	}
 	else
 	{
