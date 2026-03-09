@@ -5,12 +5,13 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/SceneComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "WeaponFireComponent.h"
 
 // Sets default values
 AWeapon::AWeapon()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	Root = CreateDefaultSubobject<USceneComponent>("Root");
 	SetRootComponent(Root);
@@ -21,6 +22,7 @@ AWeapon::AWeapon()
 	MuzzlePoint = CreateDefaultSubobject<USceneComponent>("MuzzlePoint");
 	MuzzlePoint->SetupAttachment(WeaponMesh);
 
+	WeaponFireComponent = CreateDefaultSubobject<UWeaponFireComponent>("WeaponFireComponent");
 }
 
 // Called when the game starts or when spawned

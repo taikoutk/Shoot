@@ -33,6 +33,9 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	USceneComponent* MuzzlePoint;
 
+	UPROPERTY(VisibleAnywhere)
+	UWeaponFireComponent* WeaponFireComponent;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	TSubclassOf<AActor> ProjectileClass;
 };
