@@ -33,7 +33,7 @@ class AShootMyProjectCharacter : public ACharacter
 	UCameraComponent* FollowCamera;
 
 	// Weapon
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	TSubclassOf<AWeapon> WeaponClass;
 
 	UPROPERTY()

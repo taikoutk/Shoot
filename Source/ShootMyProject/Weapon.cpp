@@ -4,8 +4,7 @@
 #include "Weapon.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/SceneComponent.h"
-#include "Kismet/GameplayStatics.h"
-#include "WeaponFireComponent.h"
+#include "BarrelComponent.h"
 
 // Sets default values
 AWeapon::AWeapon()
@@ -13,16 +12,16 @@ AWeapon::AWeapon()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
-	Root = CreateDefaultSubobject<USceneComponent>("Root");
-	SetRootComponent(Root);
+	SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("SceneRoot"));
+	RootComponent = SceneRoot;
 
-	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>("WeaponMesh");
-	WeaponMesh->SetupAttachment(Root);
+	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
+	WeaponMesh->SetupAttachment(SceneRoot);
 
-	MuzzlePoint = CreateDefaultSubobject<USceneComponent>("MuzzlePoint");
+	MuzzlePoint = CreateDefaultSubobject<USceneComponent>(TEXT("MuzzlePoint"));
 	MuzzlePoint->SetupAttachment(WeaponMesh);
 
-	WeaponFireComponent = CreateDefaultSubobject<UWeaponFireComponent>("WeaponFireComponent");
+	BarrelComponent = CreateDefaultSubobject<UBarrelComponent>(TEXT("BarrelComponent"));
 }
 
 // Called when the game starts or when spawned
@@ -34,14 +33,9 @@ void AWeapon::BeginPlay()
 
 void AWeapon::Fire()
 {
+	if (!BarrelComponent) return;
 	if (!ProjectileClass) return;
+	if (!MuzzlePoint) return;
 
-	FVector Location = MuzzlePoint->GetComponentLocation();
-	FRotator Rotation = MuzzlePoint->GetComponentRotation();
-
-	GetWorld()->SpawnActor<AActor>(
-		ProjectileClass,
-		Location,
-		Rotation
-	);
+	BarrelComponent->Fire(ProjectileClass, MuzzlePoint, GetOwner());
 }

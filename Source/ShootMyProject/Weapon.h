@@ -8,6 +8,8 @@
 
 class USkeletalMeshComponent;
 class USceneComponent;
+class UBarrelComponent;
+class AProjectile;
 
 UCLASS()
 class SHOOTMYPROJECT_API AWeapon : public AActor
@@ -24,17 +26,17 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UPROPERTY(VisibleAnywhere)
-	USceneComponent* Root;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
+	USceneComponent* SceneRoot;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
 	USkeletalMeshComponent* WeaponMesh;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
 	USceneComponent* MuzzlePoint;
 
-	UPROPERTY(VisibleAnywhere)
-	UWeaponFireComponent* WeaponFireComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
+	UBarrelComponent* BarrelComponent;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	TSubclassOf<AActor> ProjectileClass;

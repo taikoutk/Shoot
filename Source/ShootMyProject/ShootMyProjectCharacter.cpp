@@ -55,24 +55,28 @@ void AShootMyProjectCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (WeaponClass)
-	{
-		CurrentWeapon = GetWorld()->SpawnActor<AWeapon>(WeaponClass);
+	if (!WeaponClass) return;
 
-		CurrentWeapon->AttachToComponent(
-			GetMesh(),
-			FAttachmentTransformRules::SnapToTargetIncludingScale,
-			"HandGrip_R"
-		);
-	}
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+	SpawnParams.Instigator = this;
+
+	CurrentWeapon = GetWorld()->SpawnActor<AWeapon>(WeaponClass, SpawnParams);
+
+	if (!CurrentWeapon) return;
+
+	CurrentWeapon->AttachToComponent(
+		GetMesh(),
+		FAttachmentTransformRules::SnapToTargetIncludingScale,
+		TEXT("HandGrip_R")
+	);
 }
 
 void AShootMyProjectCharacter::Shoot()
 {
-	if (CurrentWeapon)
-	{
-		CurrentWeapon->Fire();
-	}
+	if (!CurrentWeapon) return;
+
+	CurrentWeapon->Fire();
 }
 
 void AShootMyProjectCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
