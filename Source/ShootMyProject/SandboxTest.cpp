@@ -3,6 +3,10 @@
 #include "SandboxTest.h"
 #include "CoreMinimal.h"
 #include "Misc/AutomationTest.h"
+#include "Engine/World.h"
+#include "EngineUtils.h"
+#include "Turret.h"
+#include "Weapon.h"
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FMathMaxInt, "STest.Math.MaxInt",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::HighPriority);
@@ -12,6 +16,10 @@ IMPLEMENT_SIMPLE_AUTOMATION_TEST(FMathSqrt, "STest.Math.Sqrt",
 
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FOneNotTwo, "STest.Math.OneNotTwo",
 	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::HighPriority);
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FTurretTest, "STest.Turret.SpawnsWeapon",
+	EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::HighPriority);
+
 
 bool FMathMaxInt::RunTest(const FString& Parameters)
 {
@@ -35,5 +43,44 @@ bool FOneNotTwo::RunTest(const FString& Parameters)
 	{
 		AddWarning("1 not equal 2");
 	}
+	return true;
+}
+
+bool FTurretTest::RunTest(const FString& Parameters)
+{
+	UWorld* TestWorld = nullptr;
+
+	for (const FWorldContext& Context : GEngine->GetWorldContexts())
+	{
+		if (Context.WorldType == EWorldType::Editor)
+		{
+			TestWorld = Context.World();
+			if (TestWorld)
+			{
+				break;
+			}
+		}
+	}
+
+	if (!TestNotNull(TEXT("Editor world should exist"), TestWorld))
+	{
+		return false;
+	}
+
+	ATurret* FoundTurret = nullptr;
+
+	for (TActorIterator<ATurret> It(TestWorld); It; ++It)
+	{
+		FoundTurret = *It;
+		break;
+	}
+
+	if (!TestNotNull(TEXT("Turret should exist in editor world"), FoundTurret))
+	{
+		return false;
+	}
+
+	TestTrue(TEXT("Turret should have WeaponClass assigned"), FoundTurret->GetWeaponClass() != nullptr);
+
 	return true;
 }

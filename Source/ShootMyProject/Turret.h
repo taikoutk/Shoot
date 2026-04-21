@@ -15,8 +15,9 @@ class SHOOTMYPROJECT_API ATurret : public AActor
 {
 	GENERATED_BODY()
 	
-public:	
-
+public:
+	FORCEINLINE AWeapon* GetCurrentWeapon() const { return CurrentWeapon; }
+	FORCEINLINE TSubclassOf<AWeapon> GetWeaponClass() const { return WeaponClass; }
 	ATurret();
 
 protected:
